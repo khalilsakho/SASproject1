@@ -3,12 +3,12 @@
 
 ## 📚 Table of Contents
 
-- [🔍 Objective](#Objective)
-- [📎 Tools Used](##-tools-used)
-- [🔧 Data Manipulation & Cleaning](##-data-manipulation-and-cleaning)
-- [📊 Descriptive Statistics and Dataset Merging](##-Descriptive-Statistics-and-Dataset-Merging)
-- [🧪 Regression Models](##-regression-models)
-- [📈 Key Findings](##-key-findings)
+- [🔍 Objective](#-objective)
+- [📎 Tools Used](#-tools-used)
+- [🔧 Data Manipulation & Cleaning](#-data-manipulation-and-cleaning)
+- [📊 Descriptive Statistics and Dataset Merging](#-descriptive-statistics-and-dataset-merging)
+- [🧪 Regression Models](#-regression-models)
+- [📈 Key Findings](#-key-findings)
 
 
 ## 🔍 Objective
