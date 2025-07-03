@@ -16,7 +16,7 @@ This project explores the empirical relationship between educational attainment 
 
 # 📎 Tools Used
 
-- **SAS 9.4** – Primary tool for data import, cleaning, transformation, statistical analysis, and visualization
+- **SAS® OnDemand for Academics** – Primary tool for data import, cleaning, transformation, statistical analysis, and visualization
 - **PROC MEANS, PROC FORMAT, PROC SGPLOT, PROC REG** – Key SAS procedures used
 - **PDF Report** – Final write-up including figures, interpretations, and model results
   
