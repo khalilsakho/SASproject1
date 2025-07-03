@@ -25,12 +25,12 @@ This project explores the empirical relationship between educational attainment 
 
 - **Feature Creation**:
   - *Import Data & Create a New Dataset*
-```
+```sas
 DATA WORK.projdata1;
 set e625data.cps_raw_sample;
 ```
   - *Create Race Variables*
-```
+```sas
 	IF pehspnon eq 1 THEN hispanic = 1;
 	ELSE IF pehspnon eq 2 THEN hispanic = 0;
 	
@@ -62,10 +62,10 @@ set e625data.cps_raw_sample;
    label Other = "Other = 1 if the person is of another race and is not Hispanic";
    label Hispanic = "hispanic = 1 if the person is Hispanic regardless of race";
 RUN;
-```
+
 
   - *Create Citizenship & Marital Status Variables*
-```
+```sas
    citizen = 0;
    if PRCITSHP ge 1 and PRCITSHP le 4 then citizen = 1;
 
@@ -92,7 +92,7 @@ RUN;
 RUN;
 ```
   - *Create Sex Variables*
-```
+```sas
 	*Used the CPS variable A_SEX to create a variable called female = 1 for females and = 0 for males*;
 
 	* Create female variable*;
@@ -106,7 +106,7 @@ RUN;
   - *Create a variable called earned_income that is equal to PEARNVAL*\
 	*Create a variable called Annual_Hours that is equal to usual hours per week X number of weeks worked*\
 	*Create a variable called hourly_wage that is equal to Earned_Income/Annual_Hours*;
-```
+```sas
 	Earned_Income = PEARNVAL;
 	Annual_Hours = HRSWK * WKSWORK;
 	Hourly_Wage = Earned_Income / Annual_Hours;
@@ -117,7 +117,7 @@ RUN;
 ```
 
  - *Create Education Variables*
-```
+```sas
 	educ_lt_hs = 0;
 	educ_eq_hs = 0;
 	educ_some_college = 0;
@@ -154,7 +154,7 @@ RUN;
 ```
 
   - *Create A Variable Called poor_health which = 1 if health status is fair or poor and is = 0 otherwise*
-```
+```sas
 	poor_health = 0;
 	IF HEA = 4 THEN poor_health = 1;
 	IF HEA = 5 THEN poor_health = 1;
@@ -204,7 +204,7 @@ Once the data was cleaned and transformed, a series of SAS procedures were used 
   - Mean, minimum, and maximum values
   - Rounded to 3 decimal places using `MAXDEC=3`
 
-```
+```sas
 PROC MEANS DATA=WORK.projdata1;
 TITLE "DESCRIPTIVE STATISTICS FOR VARIABLES WITHIN WORK.projdata1";
 RUN;
@@ -228,7 +228,7 @@ RUN;
   - `hhfile` and `unit6` merged by `hhid` to create `TEMP`, which included geographic regional identifiers.
   - Regions (`south`, `northeast`, `midwest`, `west`) were derived from the `GEREG` variable.
   - Median earned income was calculated at the **state level** (`gestfips`) using `PROC MEANS`, and merged into the dataset as `median_income`.
-```
+```sas
 PROC SORT DATA=e625data.cps_hh_file out=hhfile; 
 BY hhid; 
 
@@ -300,7 +300,7 @@ RUN;
     - Citizenship and region indicators
     - Data quality flags (`miss_demo`, `miss_earn`, `miss_demo_earn`)
     - New features (`educyrs12`, `median_income`)
-```
+```sas
 DATA e625proj.analysis_data;
 SET work.projdata3;
 KEEP earned_income educ_eq_hs educ_some_college educ_college educ_ma educ_prof_phd 
@@ -311,7 +311,7 @@ RUN;
 
 - **Final inspection**:
   - Used `PROC CONTENTS` and `PROC MEANS` to ensure the dataset was correctly structured and statistically sound before modeling.
-```
+```sas
 PROC MEANS DATA= e625proj.analysis_data;
 TITLE "DESCRIPTIVE STATISTICS FOR FINAL VARIABLES";
 PROC CONTENTS DATA= e625proj.analysis_data;
