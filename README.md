@@ -320,6 +320,69 @@ RUN;
 ---
 
 This process ensured the final dataset was comprehensive, statistically validated, and ready for regression analysis.
+
 ## 🧪 Regression Models
+This project estimated multiple regression models to analyze how education and demographic factors affect earned income. The regressions were carefully designed to test for consistency between respondents with and without imputed or allocated data.
+
+---
+
+### 📊 Cross-Tabulation of Missing Data
+
+Before modeling, a frequency cross-tabulation (`PROC FREQ`) was conducted using:
+
+```sas
+PROC FORMAT;
+VALUE missinfo
+	0 = "Not Allocated/Imputed"
+	1 = "Allocated/Imputed";
+PROC FREQ DATA=e625proj.analysis_data NOPRINT;
+TABLE miss_demo*miss_earn / NOCOL NOFREQ NOPERCENT OUT=MissingDataCrossTabulations;
+WHERE miss_demo = 1 AND miss_earn = 1;
+FORMAT miss_demo missinfo. miss_earn missinfo.;  
+
+PROC PRINT DATA=MissingDataCrossTabulations;
+TITLE "Table of Cross Tabulations of miss_demo and miss_earn";
+RUN;
+```
+This allowed us to assess how many observations were affected by missing demographic and earnings data. Only individuals without any imputed data (miss_demo = 0, miss_earn = 0) were included in the primary regression to ensure robust and unbiased estimates.
+
+### 📈 Primary Regression Model (Without Imputed Data)
+```sas
+PROC REG DATA= e625proj.analysis_data PLOTS=NONE;
+TITLE "Multiple Regression Without Imputed/Allocated Demographic or Earnings Data";
+WHERE miss_demo = 0 & miss_earn = 0;
+MODEL earned_income = educ_eq_hs educ_some_college educ_college educ_ma educ_prof_phd 
+		  age18 poor_health female black hispanic asian other citizen married divorced 
+		  separated widowed median_income northeast midwest west;
+RUN;
+```
+This regression estimates the effect of education (as a series of dummy variables) and other demographic controls on earned income. 
+
+### 🧪 Joint Hypothesis Test (Education Variables)
+To determine whether all education dummies jointly contribute to the model, a TEST statement was used:
+```sas
+PROC REG DATA= e625proj.analysis_data PLOTS=NONE;
+TITLE "Multiple Regression Without Imputed/Allocated Demographic or Earnings Data (T)";
+WHERE miss_demo = 0 & miss_earn = 0;
+MODEL earned_income = educ_eq_hs educ_some_college educ_college educ_ma educ_prof_phd 
+		  age18 poor_health female black hispanic asian other citizen married divorced 
+		  separated widowed median_income northeast midwest west;
+TEST educ_eq_hs = 0, educ_some_college = 0, educ_college = 0, educ_ma = 0, educ_prof_phd = 0;
+RUN;
+```
+This F-test evaluates whether the education variables collectively improve the model's explanatory power. The result was statistically significant (p < 0.0001), confirming that education is a key predictor of income.
+
+### 🧪 Comparison Model (With Imputed Data)
+For robustness, the same regression model was re-estimated using only respondents with imputed demographic and earnings data (miss_demo = 1 & miss_earn = 1). This helps assess how missing data treatment may affect conclusions.
+```sas
+PROC REG DATA= e625proj.analysis_data PLOTS=NONE;
+TITLE "Multiple Regression on Imputed/Allocated Demographic or Earnings Data";
+WHERE miss_demo = 1 & miss_earn = 1;
+MODEL earned_income = educ_eq_hs educ_some_college educ_college educ_ma educ_prof_phd 
+		  age18 poor_health female black hispanic asian other citizen married divorced 
+		  separated widowed median_income northeast midwest west;
+RUN;
+```
+The direction and magnitude of most coefficients remained similar, but there were small variations in effect sizes—especially for variables like gender, marital status, and education. These differences were documented in the final report.
 
 ## 📈 Key Findings
