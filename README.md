@@ -1,26 +1,27 @@
-### SAS Project - Impact of Demographic Factors on Earned Income
+# SAS Project - Impact of Demographic Factors on Earned Income
 
 
 ## 📚 Table of Contents
 
-- [🔍 Objective](#-objective)
-- [📎 Tools Used](#-tools-used)
-- [🔧 Data Manipulation & Cleaning](#-data-manipulation-and-cleaning)
-- [🧪 Regression Models](#-regression-models)
-- [📈 Key Findings](#-key-findings)
+- [🔍 Objective](#Objective)
+- [📎 Tools Used](##-tools-used)
+- [🔧 Data Manipulation & Cleaning](##-data-manipulation-and-cleaning)
+- [📊 Descriptive Statistics and Dataset Merging](##-Descriptive-Statistics-and-Dataset-Merging)
+- [🧪 Regression Models](##-regression-models)
+- [📈 Key Findings](##-key-findings)
 
 
-# 🔍 Objective
+## 🔍 Objective
 
 This project explores the empirical relationship between educational attainment and earned income using a detailed dataset of demographic, socioeconomic, and regional variables. The core objective is to determine how different education levels and demographic factors (e.g., age, race, health, citizenship, marital status) influence annual earnings. The analysis uses SAS to generate insights through data visualization, statistical modeling, and regression analysis.
 
-# 📎 Tools Used
+## 📎 Tools Used
 
 - **SAS® OnDemand for Academics** – Primary tool for data import, cleaning, transformation, statistical analysis, and visualization
 - **PROC MEANS, PROC FORMAT, PROC SGPLOT, PROC REG** – Key SAS procedures used
 - **PDF Report** – Final write-up including figures, interpretations, and model results
   
-# 🔧 Data Manipulation and Cleaning
+## 🔧 Data Manipulation and Cleaning
 
 - **Feature Creation**:
   - *Import Data & Create a New Dataset*
@@ -182,7 +183,143 @@ RUN;
 	LABEL miss_demo_earn = "=1 if miss_earn or miss_demo =1";
 RUN;
 ```
+## 📊 Descriptive Statistics and Dataset Merging
 
-# 🧪 Regression Models
+Once the data was cleaned and transformed, a series of SAS procedures were used to examine variable distributions, join datasets, and prepare a finalized dataset for regression analysis.
 
-# 📈 Key Findings
+---
+
+### 📑 Summary Statistics
+
+- **`PROC MEANS`** was used to generate descriptive statistics for:
+  - The cleaned main dataset (`projdata1`)
+  - The household-level file (`cps_hh_file`)
+  - The merged dataset containing household and regional information (`TEMP`)
+  - The final project dataset (`projdata3`)
+  - The final analysis-ready dataset (`e625proj.analysis_data`)
+
+  These procedures calculated:
+  - Count (`N`)
+  - Number of missing values (`NMISS`)
+  - Mean, minimum, and maximum values
+  - Rounded to 3 decimal places using `MAXDEC=3`
+
+```
+PROC MEANS DATA=WORK.projdata1;
+TITLE "DESCRIPTIVE STATISTICS FOR VARIABLES WITHIN WORK.projdata1";
+RUN;
+
+PROC MEANS DATA=e625data.cps_hh_file n nmiss mean min max maxdec=3;
+TITLE "DESCRIPTIVE STATISTICS FOR VARIABLES WITHIN E625DATA.CPS_HH_FILE";
+
+PROC MEANS DATA=TEMP;
+TITLE "DESCRIPTIVE STATISTICS FOR VARIABLES WITHIN TEMP";
+
+PROC MEANS DATA= work.projdata3;
+TITLE "DESCRIPTIVE STATISTICS FOR VARIABLES WITHIN work.projdata3";
+RUN;
+```
+
+---
+
+### 🧩 Dataset Merging and Enhancements
+
+- **Sorted and merged multiple datasets** using common IDs (`hhid`, `PERIDNUM`) to enrich the analysis dataset:
+  - `hhfile` and `unit6` merged by `hhid` to create `TEMP`, which included geographic regional identifiers.
+  - Regions (`south`, `northeast`, `midwest`, `west`) were derived from the `GEREG` variable.
+  - Median earned income was calculated at the **state level** (`gestfips`) using `PROC MEANS`, and merged into the dataset as `median_income`.
+```
+PROC SORT DATA=e625data.cps_hh_file out=hhfile; 
+BY hhid; 
+
+PROC SORT DATA=e625u6.unit6 out=unit6; 
+BY hhid; 
+RUN;
+
+DATA temp;
+MERGE hhfile unit6;
+BY hhid;
+
+	south = 0;
+	northeast = 0; 
+	midwest = 0; 
+	west = 0;
+	
+	IF GEREG = 1 THEN northeast = 1;
+	IF GEREG = 2 THEN midwest = 1;
+	IF GEREG = 3 THEN south = 1;
+	IF GEREG = 4 THEN west = 1;
+
+	LABEL south = 'South Region';
+	LABEL northeast = 'Northeast Region'; 
+	LABEL midwest = 'Midwest Region'; 
+	LABEL west = 'West Region';
+
+PROC SORT DATA= temp;
+BY gestfips;
+
+DATA WORK.projdata2;
+MERGE temp medianinc;
+BY gestfips;
+LABEL median_income = "State Median Income";
+
+PROC MEANS DATA = temp NOPRINT;
+BY gestfips;
+OUTPUT OUT = medianinc MEDIAN(earned_income) = median_income;
+TITLE "DESCRIPTIVE STATISTICS FOR VARIABLES WITHIN TEMP by gestfips";
+RUN;
+	
+PROC SORT DATA=work.projdata2 out=projd2; 
+BY PERIDNUM; 
+  
+PROC SORT DATA=e625data.cps_additional_variables out=add_vars; 
+BY PERIDNUM;
+  
+PROC SORT DATA=work.projdata1 out=projd1; 
+BY PERIDNUM;
+RUN;
+
+DATA WORK.projdata3;
+MERGE projd1 projd2 add_vars;
+BY PERIDNUM;
+
+RUN; 
+```
+---
+
+### 🧮 Final Dataset Construction
+
+- Additional variables from `cps_additional_variables` were merged with individual-level data (`projdata1`) and household-level data (`projdata2`) to create a consolidated dataset: `projdata3`.
+
+- **Final analysis dataset**:
+  - Saved as `e625proj.analysis_data`
+  - Included only key variables necessary for regression and analysis:
+    - Income and education dummies
+    - Demographics (gender, race, age)
+    - Health and marital status
+    - Citizenship and region indicators
+    - Data quality flags (`miss_demo`, `miss_earn`, `miss_demo_earn`)
+    - New features (`educyrs12`, `median_income`)
+```
+DATA e625proj.analysis_data;
+SET work.projdata3;
+KEEP earned_income educ_eq_hs educ_some_college educ_college educ_ma educ_prof_phd 
+	age18 poor_health female black hispanic asian other citizen married 
+	divorced separated widowed median_income northeast midwest west educyrs educ_cat miss_demo educyrs12 miss_earn miss_demo_earn;
+RUN;
+```
+
+- **Final inspection**:
+  - Used `PROC CONTENTS` and `PROC MEANS` to ensure the dataset was correctly structured and statistically sound before modeling.
+```
+PROC MEANS DATA= e625proj.analysis_data;
+TITLE "DESCRIPTIVE STATISTICS FOR FINAL VARIABLES";
+PROC CONTENTS DATA= e625proj.analysis_data;
+RUN;
+```
+---
+
+This process ensured the final dataset was comprehensive, statistically validated, and ready for regression analysis.
+## 🧪 Regression Models
+
+## 📈 Key Findings
