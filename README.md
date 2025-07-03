@@ -60,6 +60,7 @@ set e625data.cps_raw_sample;
    label Asian = "Asian = 1 if the person is Asian and is not Hispanic, and = 0 otherwise";
    label Other = "Other = 1 if the person is of another race and is not Hispanic";
    label Hispanic = "hispanic = 1 if the person is Hispanic regardless of race";
+RUN;
 ```
 
   - *Create Citizenship & Marital Status Variables*
@@ -87,6 +88,7 @@ set e625data.cps_raw_sample;
    label divorced = "= 1 if divorced; = 0 otherwise";
    label separated = "= 1 if separated; = 0 otherwise";
    label never_married = "= 1 if never_married; = 0 otherwise";
+RUN;
 ```
   - *Create Sex Variables*
 ```
@@ -98,6 +100,7 @@ set e625data.cps_raw_sample;
 	Female = 0;
 	If A_Sex = 2 Then Female = 1;
 	label Female = 'female = 1 for females and = 0 for males';
+RUN;
 ```
   - *Create a variable called earned_income that is equal to PEARNVAL*\
 	*Create a variable called Annual_Hours that is equal to usual hours per week X number of weeks worked*\
@@ -109,6 +112,7 @@ set e625data.cps_raw_sample;
 	label Earned_Income ='is equal to PEARNVAL;Income Earned in a Year';
 	label Annual_Hours ='is equal to usual hours per week X number of weeks worked';
 	label Hourly_Wage ='is equal to Earned_Income/Annual_Hours';
+RUN;
 ```
 
  - *Create Education Variables*
@@ -145,6 +149,7 @@ set e625data.cps_raw_sample;
 	IF educ_college = 1 THEN educ_cat = 4;
 	IF educ_ma = 1 THEN educ_cat = 5;
 	IF educ_prof_phd = 1 THEN educ_cat = 6;
+RUN;
 ```
 
   - *Create A Variable Called poor_health which = 1 if health status is fair or poor and is = 0 otherwise*
