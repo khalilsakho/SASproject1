@@ -386,3 +386,63 @@ RUN;
 The direction and magnitude of most coefficients remained similar, but there were small variations in effect sizes—especially for variables like gender, marital status, and education. These differences were documented in the final report.
 
 ## 📈 Key Findings
+
+The results of this analysis reveal several important insights into the relationship between education, demographics, and earned income:
+
+---
+
+### 🎓 Education and Income
+
+- **Positive Impact of Education**: Each higher level of education is associated with a statistically significant increase in earned income.
+  - High School Diploma → +$7,888
+  - Some College → +$12,928
+  - Bachelor's Degree → +$29,345
+  - Master’s Degree → +$47,272
+  - Professional/PhD → +$69,212
+
+- **Joint Significance**: A hypothesis test confirmed that all education variables collectively contribute significantly to income prediction (p < 0.0001).
+
+---
+
+### 👥 Demographic Effects
+
+- **Gender Gap**: Females earn approximately **$25,129 less** than males, controlling for other factors.
+- **Race and Ethnicity**:
+  - Black individuals earn ~$4,994 less than non-Black, non-Hispanic individuals.
+  - Hispanic individuals earn ~$7,014 less on average.
+  - Asian and Other race categories showed mixed or statistically insignificant results.
+- **Marital Status**:
+  - Being married is associated with an income increase of ~$7,542.
+  - Divorced and separated individuals also earn more than never-married individuals, though the effect is smaller.
+- **Citizenship**: Citizens earn ~$5,150 more than non-citizens on average.
+
+---
+
+### 💡 Other Factors
+
+- **Age**: Each year above age 18 is associated with a ~$506 increase in earned income.
+- **Health**: Individuals in fair or poor health earn ~$10,831 less than healthier counterparts.
+- **Geography**:
+  - Living in the **West** region is associated with a ~$3,891 increase in income.
+  - No statistically significant income differences were found for the Northeast or Midwest regions.
+
+---
+
+### 🧪 Missing Data Sensitivity
+
+- Regression results were robust when comparing models **with** and **without** imputed or allocated data.
+- Most key variables remained significant across both models, though effect sizes for some (e.g., gender, health, marital status) varied slightly.
+
+---
+
+### 📊 Model Performance
+
+- **R² = 0.3081**: The final regression model explains about 30.81% of the variance in earned income.
+- While this is a moderate level of explanatory power, it strongly supports the role of **education** and **demographics** as key determinants of income.
+
+---
+
+### 📌 Conclusion
+
+This analysis confirms the powerful economic impact of educational attainment and highlights how other demographic and regional factors contribute to income inequality in the U.S. labor market. These insights can inform policy discussions around education access, wage equity, and economic opportunity.
+
